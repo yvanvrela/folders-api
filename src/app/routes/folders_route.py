@@ -3,7 +3,7 @@ from flask import Blueprint, jsonify
 folder = Blueprint('api_folder', __name__)
 
 @folder.route('/', methods=['GET'])
-def folders():
+def get_folders():
     try:
         return jsonify({'message':'All folders'})
     except:
