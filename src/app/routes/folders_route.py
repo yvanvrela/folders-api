@@ -48,4 +48,4 @@ def add_folder():
 
         return jsonify(response), 201
     except:
-        return jsonify({'message': 'Error'})
+        return jsonify({'message': 'Error'}), 500
