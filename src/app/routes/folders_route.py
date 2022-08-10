@@ -34,6 +34,11 @@ def add_folder():
         db.session.add(new_folder)
         db.session.commit()
 
-        return folder_schema.jsonify(new_folder), 200
+        response = {
+            'message': 'Folder registered successfully',
+            'folder': folder_schema.dump(new_folder),
+        }
+
+        return jsonify(response), 201
     except:
         return jsonify({'message': 'Error'})
