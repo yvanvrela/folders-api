@@ -17,10 +17,10 @@ def get_contribuyentes():
         all_contribuyentes = ContribuyenteModel.query.all()
 
         result = contribuyentes_schema.dump(all_contribuyentes)
-
-        return jsonify(result)
+        
+        return jsonify({'contribuyentes':result}), 200
     except:
-        return jsonify({'message': 'Not data'})
+        return jsonify({'message': 'Not data'}), 500
 
 
 @contribuyente.route('/add', methods=['Post'])
@@ -33,4 +33,9 @@ def add_contribuyente():
     db.session.add(new_contribuyente)
     db.session.commit()
 
-    return contribuyente_schema.jsonify(new_contribuyente)
+    response = {
+        'message':'Contribuyente registered successfully',
+        'contribuyente':contribuyente_schema.dump(new_contribuyente)
+    }
+
+    return jsonify(response), 201
