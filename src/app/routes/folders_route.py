@@ -21,6 +21,15 @@ def get_folders():
         return jsonify({'message': 'Error'}), 500
 
 
+@folder.route('/<id>', methods=['GET'])
+def get_folder(id):
+    try:
+        folder = FolderModel.query.get(id)
+        return folder_schema.jsonify(folder), 200
+    except:
+        return jsonify({'message': 'Error'}), 500
+
+
 @folder.route('/add', methods=['POST'])
 def add_folder():
     try:
