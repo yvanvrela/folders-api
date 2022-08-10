@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from database.models.folder_model import FolderModel
 from database.schemas.folder_schema import FolderShema
 from extensions.database_extension import db
@@ -16,8 +16,24 @@ def get_folders():
 
         result = folders_schema.dump(all_folders)
 
-        response = result if [] else {'message': 'Not folders'}
+        response = result if len(result) > 0 else {'message': 'Not folders'}
 
         return jsonify(response), 200
+    except:
+        return jsonify({'message': 'Error'})
+
+
+@folder.route('/add', methods=['POST'])
+def add_folder():
+    try:
+        data = request.get_json()
+
+        new_folder = FolderModel(
+            data['contribuyente_id'], data['color'], data['time'])
+
+        db.session.add(new_folder)
+        db.session.commit()
+
+        return folder_schema.jsonify(new_folder), 200
     except:
         return jsonify({'message': 'Error'})
