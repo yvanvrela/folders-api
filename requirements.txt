@@ -1,0 +1,7 @@
+flask
+flask-marshmallow
+flask-sqlalchemy
+marshmallow-sqlalchemy
+requests
+python-dotenv 
+psycopg2-binary # Linux
