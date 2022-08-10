@@ -16,11 +16,9 @@ def get_folders():
 
         result = folders_schema.dump(all_folders)
 
-        response = result if len(result) > 0 else {'message': 'Not folders'}
-
-        return jsonify(response), 200
+        return jsonify({'folders': result}), 200
     except:
-        return jsonify({'message': 'Error'})
+        return jsonify({'message': 'Error'}), 500
 
 
 @folder.route('/add', methods=['POST'])
