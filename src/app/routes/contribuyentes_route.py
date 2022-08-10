@@ -1,5 +1,4 @@
 from flask import Blueprint, jsonify, request
-from flask_sqlalchemy import SQLAlchemy
 from database.models.contribuyente_model import ContribuyenteModel
 from database.schemas.contribuyente_schema import ContribuyenteSchema
 from extensions.database_extension import db
@@ -14,11 +13,14 @@ contribuyentes_schema = ContribuyenteSchema(many=True)
 
 @contribuyente.route('/', methods=['GET'])
 def get_contribuyentes():
+    try:
+        all_contribuyentes = ContribuyenteModel.query.all()
 
-    all_contribuyentes = ContribuyenteModel.query.all()
-    print(all_contribuyentes)
-    result = contribuyentes_schema.dump(all_contribuyentes)
-    return jsonify(result)
+        result = contribuyentes_schema.dump(all_contribuyentes)
+
+        return jsonify(result)
+    except:
+        return jsonify({'message': 'Not data'})
 
 
 @contribuyente.route('/add', methods=['Post'])
