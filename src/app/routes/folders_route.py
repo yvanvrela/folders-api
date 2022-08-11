@@ -59,19 +59,16 @@ def update_folder(id):
 
         # TODO: Update
 
-        contribuyente_id = data['contrinuyente_id']
-        color = data['color']
-        time = data['time']
+        folder_reference.contribuyente_id = data['contriuyente_id']
+        folder_reference.color = data['color']
+        folder_reference.time = data['time']
 
-        folder_reference.contribuyente_id = contribuyente_id
-        folder_reference.color = color
-        folder_reference.time = time
-
+        db.session.merge(folder_reference)
         db.session.commit()
 
         response = {
             'message': 'Folder updated successfully',
-            'folder': folder_schema.dump(folder),
+            'folder': folder_schema.dump(folder_reference),
         }
         return jsonify(response), 200
     except:
