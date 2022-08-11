@@ -23,6 +23,15 @@ def get_contribuyentes():
         return jsonify({'message': 'Error'}), 500
 
 
+@contribuyente.route('/<id>', methods=['GET'])
+def get_contribuyente(id):
+    try:
+        folder = ContribuyenteModel.query.get(id)
+        return jsonify({'contribuyente': contribuyente_schema.dump(folder)}), 200
+    except:
+        return jsonify({'message': 'Error'}), 500
+
+
 @contribuyente.route('/add', methods=['POST'])
 def add_contribuyente():
     try:
