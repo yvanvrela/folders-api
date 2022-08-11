@@ -54,19 +54,19 @@ def add_folder():
 @folder.route('/<id>', methods=['PUT'])
 def update_folder(id):
     try:
-        folder_reference = FolderModel.query.get(id)
+        folder = FolderModel.query.get(id)
         data = request.get_json()
 
-        folder_reference.contribuyente_id = data['contriuyente_id']
-        folder_reference.color = data['color']
-        folder_reference.time = data['time']
+        folder.contribuyente_id = data['contriuyente_id']
+        folder.color = data['color']
+        folder.time = data['time']
 
-        db.session.merge(folder_reference)
+        db.session.merge(folder)
         db.session.commit()
 
         response = {
             'message': 'Folder updated successfully',
-            'folder': folder_schema.dump(folder_reference),
+            'folder': folder_schema.dump(folder),
         }
         return jsonify(response), 200
     except:
