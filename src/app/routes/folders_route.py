@@ -57,8 +57,6 @@ def update_folder(id):
         folder_reference = FolderModel.query.get(id)
         data = request.get_json()
 
-        # TODO: Update
-
         folder_reference.contribuyente_id = data['contriuyente_id']
         folder_reference.color = data['color']
         folder_reference.time = data['time']
@@ -69,6 +67,22 @@ def update_folder(id):
         response = {
             'message': 'Folder updated successfully',
             'folder': folder_schema.dump(folder_reference),
+        }
+        return jsonify(response), 200
+    except:
+        return jsonify({'message': 'Error'}), 500
+
+
+@folder.route('/<id>', methods=['DELETE'])
+def delete_folder(id):
+    try:
+        folder = FolderModel.query.get(id)
+        db.session.delete(folder)
+        db.session.commit()
+
+        response = {
+            'message': 'Folder deleted successfully',
+            'folder': folder_schema.dump(folder)
         }
         return jsonify(response), 200
     except:
