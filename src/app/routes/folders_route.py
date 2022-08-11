@@ -30,7 +30,7 @@ def get_folder(id):
         return jsonify({'message': 'Error'}), 500
 
 
-@folder.route('/add', methods=['POST'])
+@folder.route('/', methods=['POST'])
 def add_folder():
     try:
         data = request.get_json()
@@ -47,5 +47,32 @@ def add_folder():
         }
 
         return jsonify(response), 201
+    except:
+        return jsonify({'message': 'Error'}), 500
+
+
+@folder.route('/<id>', methods=['PUT'])
+def update_folder(id):
+    try:
+        folder_reference = FolderModel.query.get(id)
+        data = request.get_json()
+
+        # TODO: Update
+
+        contribuyente_id = data['contrinuyente_id']
+        color = data['color']
+        time = data['time']
+
+        folder_reference.contribuyente_id = contribuyente_id
+        folder_reference.color = color
+        folder_reference.time = time
+
+        db.session.commit()
+
+        response = {
+            'message': 'Folder updated successfully',
+            'folder': folder_schema.dump(folder),
+        }
+        return jsonify(response), 200
     except:
         return jsonify({'message': 'Error'}), 500
