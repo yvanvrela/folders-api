@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, abort
 from database.models.contribuyente_model import ContribuyenteModel
 from database.models.folder_model import FolderModel
 from database.schemas.folder_schema import FolderShema, ValidationError
@@ -104,15 +104,16 @@ def update_folder(id):
 
 @folder.route('/<id>', methods=['DELETE'])
 def delete_folder(id):
-    try:
-        folder = FolderModel.query.get(id)
-        db.session.delete(folder)
-        db.session.commit()
 
-        response = {
-            'message': 'Folder deleted successfully',
-            'folder': folder_schema.dump(folder)
-        }
-        return jsonify(response), 200
-    except:
-        return jsonify({'message': 'Error'}), 500
+    folder = FolderModel.query.filter_by(id=id).first()
+    if not folder:
+        abort(404)
+
+    db.session.delete(folder)
+    db.session.commit()
+
+    response = {
+        'message': 'Folder deleted successfully',
+        'folder': folder_schema.dump(folder)
+    }
+    return jsonify(response), 200
