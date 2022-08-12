@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify, request
 from database.models.folder_model import FolderModel
-from database.schemas.folder_schema import FolderShema
+from database.schemas.folder_schema import FolderShema, ValidationError
 from extensions.database_extension import db
+
 
 folder = Blueprint('api_folder', __name__)
 
@@ -53,24 +54,30 @@ def add_folder():
 
 @folder.route('/<id>', methods=['PUT'])
 def update_folder(id):
+
+    json_data = request.get_json()
+
+    if not json_data:
+        return jsonify({'message': 'Not input data provided'}), 400
+
     try:
-        folder = FolderModel.query.get(id)
-        data = request.get_json()
+        data = folder_schema.load(json_data)
+    except ValidationError as err:
+        return err.messages, 422
 
-        folder.contribuyente_id = data['contriuyente_id']
-        folder.color = data['color']
-        folder.time = data['time']
+    folder = FolderModel.query.get(id)
 
-        db.session.merge(folder)
-        db.session.commit()
+    folder.contribuyente_id = data['contribuyente_id']
+    folder.color = data['color']
+    folder.time = data['time']
 
-        response = {
-            'message': 'Folder updated successfully',
-            'folder': folder_schema.dump(folder),
-        }
-        return jsonify(response), 200
-    except:
-        return jsonify({'message': 'Error'}), 500
+    db.session.commit()
+
+    response = {
+        'message': 'Folder updated successfully',
+        'folder': folder_schema.dump(folder),
+    }
+    return jsonify(response), 200
 
 
 @folder.route('/<id>', methods=['DELETE'])
