@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request
+from database.models.contribuyente_model import ContribuyenteModel
 from database.models.folder_model import FolderModel
 from database.schemas.folder_schema import FolderShema, ValidationError
 from extensions.database_extension import db
@@ -60,12 +61,20 @@ def update_folder(id):
     if not json_data:
         return jsonify({'message': 'Not input data provided'}), 400
 
+    # Validate and deserialize input
     try:
         data = folder_schema.load(json_data)
     except ValidationError as err:
         return err.messages, 422
 
-    folder = FolderModel.query.get(id)
+    folder = FolderModel.query.filter_by(id=id).first()
+    if not folder:
+        return jsonify({'message': 'Folder does not exist'}), 400
+
+    contribuyente = ContribuyenteModel.query.filter_by(
+        id=data['contribuyente_id']).first()
+    if not contribuyente:
+        return jsonify({'message': 'Contribuyente does not exist'}), 400
 
     folder.contribuyente_id = data['contribuyente_id']
     folder.color = data['color']
