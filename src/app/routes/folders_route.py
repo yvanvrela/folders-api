@@ -35,7 +35,20 @@ def get_folder(id):
 @folder.route('/', methods=['POST'])
 def add_folder():
     try:
-        data = request.get_json()
+        json_data = request.get_json()
+        if not json_data:
+            return jsonify({'message': 'Not input data provided'}), 400
+
+        try:
+            data = folder_schema.load(json_data)
+        except ValidationError as err:
+            return jsonify(err.messages), 422
+
+        # Verify contribuyente id
+        contribuyente = ContribuyenteModel.query.filter_by(
+            id=data['contribuyente_id']).first()
+        if not contribuyente:
+            return jsonify({'message': 'Contribuyente does not exist'}), 400
 
         new_folder = FolderModel(
             data['contribuyente_id'], data['color'], data['time'])
