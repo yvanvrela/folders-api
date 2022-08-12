@@ -25,11 +25,11 @@ def get_folders():
 
 @folder.route('/<id>', methods=['GET'])
 def get_folder(id):
-    try:
-        folder = FolderModel.query.get(id)
-        return folder_schema.jsonify(folder), 200
-    except:
-        return jsonify({'message': 'Error'}), 500
+    folder = FolderModel.query.filter_by(id=id).first()
+    if not folder:
+        return jsonify({'message': 'Folder does not exist'}), 400
+
+    return folder_schema.jsonify(folder), 200
 
 
 @folder.route('/', methods=['POST'])
