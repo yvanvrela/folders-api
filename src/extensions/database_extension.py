@@ -11,6 +11,4 @@ migrate = Migrate()
 def register_database_config(app: Flask):
     db.init_app(app)
     ma.init_app(app)
-    from database.models.contribuyente_model import ContribuyenteModel
-    from database.models.folder_model import FolderModel
     migrate.init_app(app, db, directory='src/database/migrations')
