@@ -1,6 +1,6 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, abort
 from database.models.contribuyente_model import ContribuyenteModel
-from database.schemas.contribuyente_schema import ContribuyenteSchema
+from database.schemas.contribuyente_schema import ContribuyenteSchema, ValidationError
 from extensions.database_extension import db
 
 
@@ -32,20 +32,29 @@ def get_contribuyente(id):
         return jsonify({'message': 'Error'}), 500
 
 
-@contribuyente.route('/add', methods=['POST'])
+@contribuyente.route('/', methods=['POST'])
 def add_contribuyente():
+    json_data = request.get_json()
+    if not json_data:
+        abort(400, description='Not input data provided')
+
     try:
-        data = request.get_json()
-        new_contribuyente = ContribuyenteModel(data['name'], data['ruc'])
+        data = contribuyente_schema.load(json_data)
+    except ValidationError as err:
+        return jsonify(err.messages), 422
 
-        db.session.add(new_contribuyente)
-        db.session.commit()
+    find_contribuyente = ContribuyenteModel.query.filter_by(
+        ruc=data['ruc']).first()
+    if find_contribuyente:
+        abort(400, description='Contribuyente already exists')
 
-        response = {
-            'message': 'Contribuyente registered successfully',
-            'contribuyente': contribuyente_schema.dump(new_contribuyente),
-        }
+    new_contribuyente = ContribuyenteModel(data['name'], data['ruc'])
+    db.session.add(new_contribuyente)
+    db.session.commit()
 
-        return jsonify(response), 201
-    except:
-        return jsonify({'message': 'Error'}), 500
+    response = {
+        'message': 'Contribuyente registered successfully',
+        'contribuyente': contribuyente_schema.dump(new_contribuyente),
+    }
+
+    return jsonify(response), 201
