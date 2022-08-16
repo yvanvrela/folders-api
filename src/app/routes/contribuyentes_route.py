@@ -88,3 +88,19 @@ def update_contribuyente(id):
         'contribuyente': contribuyente_schema.dump(contribuyente)
     }
     return jsonify(response), 200
+
+
+@contribuyente.route('/<id>', methods=['DELETE'])
+def delete_contribuyente(id):
+    contribuyente = ContribuyenteModel.query.filter_by(id=id).first()
+    if not contribuyente:
+        abort(404)
+
+    db.session.delete(contribuyente)
+    db.session.commit()
+
+    response = {
+        'message': 'Contribuyented deleted successfully',
+        'contribuyente': contribuyente_schema.dump(contribuyente),
+    }
+    return jsonify(response)
