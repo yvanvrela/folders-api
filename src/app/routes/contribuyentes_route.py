@@ -59,3 +59,32 @@ def add_contribuyente():
     }
 
     return jsonify(response), 201
+
+
+@contribuyente.route('/<id>', methods=['PUT'])
+def update_contribuyente(id):
+    json_data = request.get_json()
+    if not json_data:
+        abort(400, description='Not data provided')
+
+    # Validate Schema and deserialize input
+    try:
+        data = contribuyente_schema.load(json_data)
+    except ValidationError as err:
+        return jsonify({'errors': err.messages_dict}), 422
+
+    contribuyente = ContribuyenteModel.query.filter_by(
+        id=id).first()
+    if not contribuyente:
+        abort(400, description='Contribuyente does not exist')
+
+    contribuyente.name = data['name']
+    contribuyente.ruc = data['ruc']
+
+    db.session.commit()
+
+    response = {
+        'message': 'Contribuyente updated successfully',
+        'contribuyente': contribuyente_schema.dump(contribuyente)
+    }
+    return jsonify(response), 200
