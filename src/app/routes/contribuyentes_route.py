@@ -26,11 +26,11 @@ def get_contribuyentes():
 @contribuyente.route('/<id>', methods=['GET'])
 def get_contribuyente(id):
 
-    folder = ContribuyenteModel.query.get(id)
-    if not folder:
+    contribuyente = ContribuyenteModel.query.get(id)
+    if not contribuyente:
         abort(400, description='Contribuyente does not exist')
 
-    return jsonify({'contribuyente': contribuyente_schema.dump(folder)}), 200
+    return jsonify({'contribuyente': contribuyente_schema.dump(contribuyente)}), 200
 
 
 @contribuyente.route('/', methods=['POST'])
