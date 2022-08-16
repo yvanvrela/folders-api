@@ -13,23 +13,24 @@ contribuyentes_schema = ContribuyenteSchema(many=True)
 
 @contribuyente.route('/', methods=['GET'])
 def get_contribuyentes():
-    try:
-        all_contribuyentes = ContribuyenteModel.query.all()
 
-        result = contribuyentes_schema.dump(all_contribuyentes)
+    all_contribuyentes = ContribuyenteModel.query.all()
+    if not all_contribuyentes:
+        abort(404)
 
-        return jsonify({'contribuyentes': result}), 200
-    except:
-        return jsonify({'message': 'Error'}), 500
+    result = contribuyentes_schema.dump(all_contribuyentes)
+
+    return jsonify({'contribuyentes': result}), 200
 
 
 @contribuyente.route('/<id>', methods=['GET'])
 def get_contribuyente(id):
-    try:
-        folder = ContribuyenteModel.query.get(id)
-        return jsonify({'contribuyente': contribuyente_schema.dump(folder)}), 200
-    except:
-        return jsonify({'message': 'Error'}), 500
+
+    folder = ContribuyenteModel.query.get(id)
+    if not folder:
+        abort(400, description='Contribuyente does not exist')
+
+    return jsonify({'contribuyente': contribuyente_schema.dump(folder)}), 200
 
 
 @contribuyente.route('/', methods=['POST'])
