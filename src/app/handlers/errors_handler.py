@@ -2,7 +2,7 @@ from flask import jsonify
 
 
 def page_not_found(error):
-    return jsonify({'error': 'Not found'}), 404
+    return jsonify({'errors': {'code': 404, 'message': 'Not found data'}}), 404
 
 
 def bad_request(error):
