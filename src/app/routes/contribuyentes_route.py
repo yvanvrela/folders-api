@@ -23,8 +23,8 @@ def get_contribuyentes():
     return jsonify({'contribuyentes': result}), 200
 
 
-@contribuyente.route('/<id>', methods=['GET'])
-def get_contribuyente(id):
+@contribuyente.route('/<int:id>', methods=['GET'])
+def get_contribuyente(id: int):
 
     contribuyente = ContribuyenteModel.query.get(id)
     if not contribuyente:
